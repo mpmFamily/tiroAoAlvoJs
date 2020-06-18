@@ -16,7 +16,8 @@
     var erros = 0
     var acertos = 0
     var numeroAlvos = 0
-    var intervalo   
+    var intervalo
+    var total = 0
     
 
     // canvas
@@ -50,6 +51,7 @@
     // [BLOCO 2] o jogo funcionando em si, as funções estão em ordem seguindo um conceito parecido com um padrão middleware
 
     const startGame  = () => {
+        resetCanvas()
         const dificuldade = verifyMode()
         numeroAlvos = $numeroAlvos.value
             if (!dificuldade){
@@ -70,7 +72,7 @@
     const drawCanvas = () => {
         drawer.fillStyle="#000000"
         drawer.fillRect(0,0,500,500)
-        var mensagem = `Jogando no modo ${verifyMode()}, clique na tela para começar`
+        var mensagem = `Jogando no modo ${verifyMode()}, o jogo ja vai começar`
         drawer.font="15pt Arial"
         drawer.fillStyle="white"
         drawer.fillText(mensagem,10,50)
@@ -86,8 +88,8 @@
 
         intervalo = setInterval(() => {
             drawAlvo() // next()
+            total++
             setTimeout(limpaTela,specs.tempo)
-            erros++
         }, specs.tempo + 500)
 
 
@@ -118,33 +120,44 @@
             if ((xClick > x-specs.raio-10) && (xClick < x + specs.raio+10) && (yClick > y-specs.raio-10) && (yClick < y + specs.raio+10)){
 				shootAcerto()
             }
-            $acertos.innerHTML = `Acertos: ${acertos}`
-            $erros.innerHTML = `Erros: ${erros}`
 
     }
 
     const limpaTela = () => {
         drawer.fillStyle="#000000"
         drawer.fillRect(0,0,500,500)
+        $acertos.innerHTML = `Acertos: ${acertos}`
+        $erros.innerHTML = `Erros: ${total - acertos}`
     }
     
+    const limpaCirculo = () => {
+        const specs = difficultyManager()
+        drawer.fillStyle='#000000'
+		drawer.beginPath();
+		drawer.arc(x, y, specs.raio + 10, 0,2*Math.PI);
+		drawer.fill();
+    }
+
     const resetCanvas = () => {
-        erros, acertos = 0
+        erros = 0
+        acertos = 0
+        total = 0
         $acertos.innerHTML = `Acertos: 0`
         $erros.innerHTML = `Erros: 0`
     }
 
     const shootAcerto = ()  => {
-        limpaTela()
-        erros--
-        acertos++     
-        if (erros + acertos >= numeroAlvos) stopGame()
+        acertos++ 
+        limpaCirculo()
+        if (total >= numeroAlvos) stopGame()
     }
     
     const stopGame = () => {  
         clearInterval(intervalo)
         $iniciar.disabled = false
         $parar.disabled = true
+        $acertos.innerHTML = `Acertos: ${acertos}`
+        $erros.innerHTML = `Erros: ${total - acertos}`
         
     }
 
