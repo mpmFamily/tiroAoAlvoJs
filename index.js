@@ -90,6 +90,9 @@
             drawAlvo() // next()
             total++
             setTimeout(limpaTela,specs.tempo)
+            if (total > numeroAlvos - 1) {
+                clearInterval(intervalo)
+            }
         }, specs.tempo + 500)
 
 
@@ -108,8 +111,6 @@
 		drawer.arc(x, y, specs.raio + 10, 0,2*Math.PI);
 		drawer.fill();
     }
-
-
 
     // [BLOCO 3] funções necessárias pra manutenção do canvas
 
@@ -149,7 +150,6 @@
     const shootAcerto = ()  => {
         acertos++ 
         limpaCirculo()
-        if (total >= numeroAlvos) stopGame()
     }
     
     const stopGame = () => {  
